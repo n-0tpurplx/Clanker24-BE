@@ -1,7 +1,12 @@
-export function classifyAircraft(acft) {
+export function classifyAircraft(acft, airport) {
+    const fp = acft.flightPlan || {};
+
+    const from = fp.departing;
+    const to = fp.arriving;
+
     const isOnGround = acft.isOnGround;
-    const altitude = acft.altitude || 0;
     const groundSpeed = acft.groundSpeed || 0;
+    const altitude = acft.altitude || 0;
 
     // PARKED
     if (isOnGround && groundSpeed < 5) {
@@ -13,9 +18,14 @@ export function classifyAircraft(acft) {
         return "TAXIING";
     }
 
-    // DEPARTING (your simplified logic)
-    if (!isOnGround && altitude < 2000) {
+    // DEPARTING (from THIS airport)
+    if (!isOnGround && from === airport && altitude < 2000) {
         return "DEPARTING";
+    }
+
+    // ARRIVING (TO THIS airport)
+    if (!isOnGround && to === airport) {
+        return "ARRIVING";
     }
 
     // ENROUTE
