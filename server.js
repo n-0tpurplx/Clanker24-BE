@@ -9,7 +9,16 @@ app.use(cors());
 
 const API_URL = "https://24data.ptfs.app/acft-data";
 
-// ---------- POLLING LOOP ----------
+// ---------------- ROOT ROUTE (FIX FOR "Cannot GET /") ----------------
+app.get("/", (req, res) => {
+    res.json({
+        name: "Clanker24 API",
+        status: "online",
+        endpoints: ["/aircraft"]
+    });
+});
+
+// ---------------- POLLING LOOP ----------------
 async function fetchAircraft() {
     try {
         const res = await fetch(API_URL);
@@ -37,11 +46,11 @@ async function fetchAircraft() {
     }
 }
 
-// poll every 3 seconds (as recommended)
+// poll every 3 seconds
 setInterval(fetchAircraft, 3000);
 fetchAircraft();
 
-// ---------- API ROUTE ----------
+// ---------------- API ROUTE ----------------
 app.get("/aircraft", (req, res) => {
     res.json({
         lastUpdate: Date.now(),
@@ -50,7 +59,7 @@ app.get("/aircraft", (req, res) => {
     });
 });
 
-// ---------- START SERVER ----------
+// ---------------- START SERVER ----------------
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
